@@ -1,0 +1,104 @@
+mongoose encryption and .env file things
+
+require('dotenv').config();
+const express=require("express");
+const app=express();
+const mongoose=require("mongoose");
+var encrypt = require('mongoose-encryption');
+const https=require("https");//api
+const bodyParser=require("body-parser");
+app.use(bodyParser.urlencoded({extended:true}));//to use body parser
+// const date=require(__dirname+"/module.js");//this will go in that module and run all the code inside it
+app.set('view engine', 'ejs');//for ejs to work
+app.use(express.static("public"));//this will let other static files like css and images all to render
+
+mongoose.connect("mongodb://localhost:27017/secretsDB") ;//toDoDB is the name of database when connecting locally
+const _=require("lodash");
+const secretSchema=new mongoose.Schema(
+  {
+    email:String,
+    pass:String
+  }
+);
+//craeting a schema
+
+// var secret = process.env.SOME_LONG_UNGUESSABLE_STRING;
+// userSchema.plugin(encrypt, { secret: secret });
+
+var secret = process.env.encString;//secret is not a key
+secretSchema.plugin(encrypt, { secret: secret ,encryptedFields: ['pass'] });//if no field is added will encrypt the complete database
+//we can encrypt more than one field by adding comma seperated each has their own quotes
+const Secret=mongoose.model("Secret",secretSchema);
+
+
+app.get("/",function(req,res)
+{
+  res.render("home");
+});
+
+
+app.get("/login",function(req,res)
+{
+  res.render("login");
+});
+
+app.get("/register",function(req,res)
+{
+  res.render("register");
+});
+
+app.post("/register",function(req,res)
+{
+  const nuser=new Secret({
+    email:req.body.username,
+    pass:req.body.password
+  });
+
+  nuser.save(function(err)
+{
+  if(err)
+  {
+    console.log(err);
+  }
+  else{
+    console.log("New user registered successfullly");
+    res.render("secrets.ejs");
+  }
+});
+});
+
+app.post("/login",function(req,res)
+{
+ const cemail=req.body.username;
+ const cpass=req.body.password;
+  Secret.findOne({email:cemail},function(err,found)
+  {
+    if(err)
+    {
+      console.log(err);
+    }
+    else{
+      if(found)
+      {
+        if(found.pass===cpass)
+        {
+          res.render("secrets");
+        }
+        else
+        {
+          res.send("Wrong password");
+        }
+      }
+      else
+      {
+        res.send("no such username");
+      }
+    }
+  }
+);
+});
+
+app.listen(process.env.PORT|| 3000,function()
+{
+  console.log("server working");
+});

@@ -1,0 +1,69 @@
+1st LEVEL
+simple password matching
+
+2nd LEVEL
+mongoose-encryption
+install and require
+use stndrd methodfor creating schema
+create a long var of string type for encryption named secret
+use it as a plugin
+it can encrypt as well as authenticate but angela taught only encryption
+nothing else needs to be done in previous code for database things as
+encryption is done when save is applied and decryption at the time of find
+
+now inside the findOne when we console log things we get the password in plain text
+so we create a .env file which will be present in .gitignore and will not visible anywhere we host it
+so our data like encryption string and api keys are safe there
+
+
+
+Now creting environment variable
+install dotenv from npm
+at the top of app.js place require('dotenv').config()
+create a .env file  this should be just inside the root folder of project
+in that place key value pair of things
+no const var no quotation no space before and after =
+make sure that no spaces are in key
+now accesing those variables in our app.js
+
+DB_HOST=localhost
+DB_USER=root
+DB_PASS=s1mpl3
+process.env now has the keys and values you defined in your .env file.
+
+const db = require('db')
+db.connect({
+  host: process.env.DB_HOST,
+  username: process.env.DB_USER,
+  password: process.env.DB_PASS
+})
+
+3rd LEVEL
+hashing concept
+md5 hash function
+
+install md5 and require it
+var h=md5("message");
+now h contains the value of hash of message
+
+
+4th LEVEL
+Salting and Hashing Password With bCrypt
+install and require
+tell the number of salting rounds
+it has two methods
+first is to save to database the ghased value and
+second is the compare function;
+
+
+5th LEVEL
+creating cookies and session
+install passport, passport-local ,-passport-localmongoose express-session
+passport is for authentication
+passport -local is used by passport local-localmongoose
+express -seesion is for session
+
+so we require passport ,passport-local-mongoose and express session
+
+
+sbse pehle session ka kaam phir passport ka phir local mangoose ka
